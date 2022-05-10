@@ -84,10 +84,10 @@
     return false;
   }
 
-  function Ganhou(casa1, casa2, casa3, color) {
-    document.getElementById("campo_n" + casa1).style.backgroundColor = color;
-    document.getElementById("campo_n" + casa2).style.backgroundColor = color;
-    document.getElementById("campo_n" + casa3).style.backgroundColor = color;
+  function Ganhou(campo1, campo2, campo3, color) {
+    document.getElementById("campo_n" + campo1).style.backgroundColor = color;
+    document.getElementById("campo_n" + campo2).style.backgroundColor = color;
+    document.getElementById("campo_n" + campo3).style.backgroundColor = color;
     FimJogo = true;
   }
 
@@ -141,22 +141,40 @@
       casas[casasParaJogar.indexOf(1)] = 2;
 
     } else {
-      if (casas[4] == 0) {//jogar no centro
-        document.getElementById("campo_n" + (4 + 1)).innerHTML = "O";
-        casas[4] = 2;
-      } else {
-        RespostaAleatoria()
-
-      }
-
+      RespostaAleatoria()
     }
+    
   }
 
   function RespostaAleatoria() {
-    if (casas.includes(0)) {
+
+    casasCantos = [casas[0],casas[2],casas[4],casas[6],casas[8]]
+    casasLaterais = [casas[1],casas[3],casas[5],casas[7]]
+    if (casas[4] == 0) {//jogar no centro
+        document.getElementById("campo_n" + (4 + 1)).innerHTML = "O";
+        casas[4] = 2;
+    }else if(casasCantos.includes(0) && (casas[4] == 1 || casasLaterais.includes(1)) ){
+      if(casas[5]==1 && (casas[7]==1 || casas[6]==1 )&& casas[8] == 0){ //jogada específica
+        document.getElementById("campo_n" + (8 + 1)).innerHTML = "O";
+        casas[8] = 2;
+      }else{// jogar casas das diagonais
+        var campoParaAssinalar = (casasCantos.indexOf(0)+1)*2 -2
+        document.getElementById("campo_n" + (campoParaAssinalar + 1)).innerHTML = "O";
+        casas[campoParaAssinalar] = 2;
+      }
+
+
+    }else if(casas[4] == 2 && casasLaterais.includes(0) ){//jogar em casas das laterais
+      var campoParaAssinalar = casasLaterais.indexOf(0) + casasLaterais.indexOf(0) + 1
+      document.getElementById("campo_n" + (campoParaAssinalar + 1)).innerHTML = "O";
+      casas[campoParaAssinalar] = 2;
+      
+    }
+    
+    else if (casas.includes(0)) {
       var campoAssinalado = Math.floor(Math.random() * 10);
 
-      while (casas[campoAssinalado] != 0 || !casas.includes(0)) {
+      while ((casas[campoAssinalado] != 0 ) || !casas.includes(0)) {
         campoAssinalado = Math.floor(Math.random() * 10);
       }
       document.getElementById("campo_n" + (campoAssinalado + 1)).innerHTML = "O";
