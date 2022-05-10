@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DeuVelha</title>
+  <link rel="stylesheet" href="estilo.css" />
+</head>
+
+<body>
+  <div class="tabuleiro">
+    <button value="1" class="campo" id="campo_n1" onclick="Jogar(this)"></button>
+    <button value="2" class="campo" id="campo_n2" onclick="Jogar(this)"></button>
+    <button value="3" class="campo" id="campo_n3" onclick="Jogar(this)"></button>
+    <button value="4" class="campo" id="campo_n4" onclick="Jogar(this)"></button>
+    <button value="5" class="campo" id="campo_n5" onclick="Jogar(this)"></button>
+    <button value="6" class="campo" id="campo_n6" onclick="Jogar(this)"></button>
+    <button value="7" class="campo" id="campo_n7" onclick="Jogar(this)"></button>
+    <button value="8" class="campo" id="campo_n8" onclick="Jogar(this)"></button>
+    <button value="9" class="campo" id="campo_n9" onclick="Jogar(this)"></button>
+  </div>
+</body>
+
+</html>
+<script>
+  var casas = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+  var FimJogo = false;
+
+  function Jogar(button_id) {
+    if (button_id.innerHTML == "" && FimJogo == false) {
+      var casa_atual = Number(button_id.value);
+
+      button_id.innerHTML = "X";
+
+      casas[casa_atual - 1] = 1;
+
+      if (!verificarGanhou("green") && casas.includes(0)) {
+        RespostaInteligente();
+        verificarGanhou("red");
+      }
+    } else if (FimJogo || !casas.includes(0)) {
+      for (var i = 0; i < 9; i++) {
+        casas[i] = 0;
+        document.getElementById("campo_n" + (i + 1)).innerHTML = "";
+        document.getElementById("campo_n" + (i + 1)).style.backgroundColor =
+          "white";
+      }
+      FimJogo = false;
+    }
+  }
+
+  function verificarGanhou(color) {
+    var linhas = 2;
+    for (var i = 0; i <= linhas; i++) {
+      var y = 3 * i;
+      if (
+        casas[y] == casas[y + 1] &&
+        casas[y + 1] == casas[y + 2] &&
+        casas[y] > 0
+      ) {
+        Ganhou(y + 1, y + 2, y + 3, color);
+        return true;
+      } else if (
+        casas[i] == casas[3 + i] &&
+        casas[3 + i] == casas[6 + i] &&
+        casas[i] > 0
+      ) {
+        Ganhou(i + 1, i + 4, i + 7, color);
+        return true;
+      }
+    }
+
+    if (casas[0] == casas[4] && casas[4] == casas[8] && casas[4] > 0) {
+      Ganhou(1, 5, 9, color);
+      return true;
+    }
+
+    if (casas[2] == casas[4] && casas[4] == casas[6] && casas[4] > 0) {
+      Ganhou(3, 5, 7, color);
+      return true;
+    }
+    return false;
+  }
+
+  function Ganhou(casa1, casa2, casa3, color) {
+    document.getElementById("campo_n" + casa1).style.backgroundColor = color;
+    document.getElementById("campo_n" + casa2).style.backgroundColor = color;
+    document.getElementById("campo_n" + casa3).style.backgroundColor = color;
+    FimJogo = true;
+  }
+
+  function RespostaInteligente() {
+    var casasParaJogar = [0, 0, 0, 0, 0, 0, 0, 0, 0]; //as melhores jogadas serão armazenadas aqui
+    //procurando jogadas
+    for (var i = 0; i <= 2; i++) {
+      var y = 3 * i;
+      if (DoisCampos(y, y + 1, y + 2)) {
+
+        if (casas[y] == 2 || casas[y + 1] == 2 || casas[y + 2] == 2) {
+          casasParaJogar[CampoVazio(y, y + 1, y + 2)] = 2
+        } else if(casasParaJogar[CampoVazio(y, y + 1, y + 2)] == 0){
+          casasParaJogar[CampoVazio(y, y + 1, y + 2)] = 1
+        }
+
+      } if (DoisCampos(i, i + 3, i + 6)) {
+
+        if (casas[i] == 2 || casas[i + 3] == 2 || casas[i + 6] == 2) {
+          casasParaJogar[CampoVazio(i, i + 3, i + 6)] = 2
+
+        } else if(casasParaJogar[CampoVazio(i, i + 3, i + 6)] == 0){
+          casasParaJogar[CampoVazio(i, i + 3, i + 6)] = 1
+        }
+
+      }
+    }
+
+    if (DoisCampos(0, 4, 8)) {
+      if (casas[0] == 2 || casas[4] == 2 || casas[8] == 2) {
+        casasParaJogar[CampoVazio(0, 4, 8)] = 2
+      } else if(casasParaJogar[CampoVazio(0, 4, 8)] == 0){
+        casasParaJogar[CampoVazio(0, 4, 8)] = 1
+      }
+    }
+
+    if (DoisCampos(2, 4, 6)) {
+      if (casas[2] == 2 || casas[4] == 2 || casas[6] == 2) {
+        casasParaJogar[CampoVazio(2, 4, 6)] = 2
+      } else if(casasParaJogar[CampoVazio(2, 4, 6)] == 1){
+        casasParaJogar[CampoVazio(2, 4, 6)] = 1
+      }
+    }//fim da procura
+    
+    if (casasParaJogar.includes(2)) {//escolhendo a melhor jogada
+      document.getElementById("campo_n" + (casasParaJogar.indexOf(2) + 1)).innerHTML = "O";
+      casas[casasParaJogar.indexOf(2)] = 2;
+
+    } else if (casasParaJogar.includes(1)) {
+      document.getElementById("campo_n" + (casasParaJogar.indexOf(1) + 1)).innerHTML = "O";
+      casas[casasParaJogar.indexOf(1)] = 2;
+
+    } else {
+      if (casas[4] == 0) {//jogar no centro
+        document.getElementById("campo_n" + (4 + 1)).innerHTML = "O";
+        casas[4] = 2;
+      } else {
+        RespostaAleatoria()
+
+      }
+
+    }
+  }
+
+  function RespostaAleatoria() {
+    if (casas.includes(0)) {
+      var campoAssinalado = Math.floor(Math.random() * 10);
+
+      while (casas[campoAssinalado] != 0 || !casas.includes(0)) {
+        campoAssinalado = Math.floor(Math.random() * 10);
+      }
+      document.getElementById("campo_n" + (campoAssinalado + 1)).innerHTML = "O";
+      casas[campoAssinalado] = 2;
+    }
+
+  }
+
+  function CampoVazio(campo1, campo2, campo3) {
+    if (casas[campo1] == 0) {
+      return campo1
+    } else if (casas[campo2] == 0) {
+      return campo2
+    } else {
+      return campo3
+    }
+  }
+
+  function DoisCampos(campo1, campo2, campo3) {
+    if (casas[campo1] == casas[campo2] && casas[campo3] == 0 && casas[campo1] > 0) {
+      return true
+    } else if (casas[campo2] == casas[campo3] && casas[campo1] == 0 && casas[campo2] > 0) {
+      return true
+    } else if (casas[campo1] == casas[campo3] && casas[campo2] == 0 && casas[campo3] > 0) {
+      return true
+    } else {
+      return false
+    }
+  }
+</script>
