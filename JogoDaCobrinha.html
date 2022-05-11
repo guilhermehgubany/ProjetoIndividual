@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Snake</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <button onclick="IniciarJogo()">Play</button>
+  <button onclick="PausarJogo()">Pause</button>
+  <div class="tabuleiroStyle" id="tabuleiro">
+  </div>
+</body>
+
+</html>
+<script>
+  var TabuleiroTamanho = 9
+
+  var Jogando = false
+  var FimJogo = false;
+
+  var direction = [1,0]
+  var position = [0,0]
+  var corpoCobra = [position]
+  
+  var TeclaCima = ["KeyW"]
+  var TeclaBaixo = ["KeyS"]
+  var TeclaEsquerda = ["KeyA"]
+  var TeclaDireita = ["KeyD"]
+
+  for(var y = 0; y < TabuleiroTamanho; y++){ //criando o tabuleiro
+    for(var x = 0; x < TabuleiroTamanho; x++){
+      tabuleiro.innerHTML += `<button class="campo" style="width:${500/TabuleiroTamanho}px; height:${500/TabuleiroTamanho}px" id="campo_n${x.toString() + y.toString()}"></button>`
+    }
+  }
+
+  function IniciarJogo() {
+    setTimeout(move, 1000)
+    jogando = true
+  }
+
+  function PausarJogo(){
+    jogando = false
+  }
+
+  window.addEventListener('keydown', event => {
+    if (TeclaCima.includes(event.code)){
+      direction = [0, -1]
+    }
+    if (TeclaBaixo.includes(event.code)){
+      direction = [0, 1]
+    }
+    if (TeclaEsquerda.includes(event.code)){
+      direction = [-1, 0]
+    }
+    if (TeclaDireita.includes(event.code)){
+      direction = [1, 0]
+    }
+  });
+
+  function move(){
+    position[0] += direction[0]
+    position[1] += direction[1]
+    if(position[0] >= TabuleiroTamanho){
+      position[0] = 0
+    }
+    if(position[1] >= TabuleiroTamanho){
+      position[1] = 0
+    }
+    if(position[0] < 0){
+      position[0] =  TabuleiroTamanho - 1
+    }
+    if(position[1]<0){
+      position[1] =  TabuleiroTamanho - 1
+    }
+    console.log(position)
+    if(jogando){
+      setTimeout(move, 400)
+    }
+
+    corpoCobra.push(position) //adicionando nova posição
+    corpoCobra.pop() // tirando ultima posição
+
+    PintarPosition()
+  }
+
+  function PintarPosition(){
+    for (var x = 0; x < TabuleiroTamanho; x++) {
+      for (var y = 0; y < TabuleiroTamanho; y++) {
+        document.getElementById("campo_n" + x.toString() + y.toString()).style.backgroundColor = "white";
+      }
+    }
+   
+    document.getElementById("campo_n" + position[0].toString() + position[1].toString()).style.backgroundColor = "yellow";
+  }
+</script>
