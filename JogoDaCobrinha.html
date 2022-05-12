@@ -24,17 +24,19 @@
   var FimJogo = false;
 
   var direction = [1,0]
-  var position = [0,0]
-  var corpoCobra = [position]
+  var position = [1,0]
+  var corpoCobra = [position,position,position]
   
   var TeclaCima = ["KeyW"]
   var TeclaBaixo = ["KeyS"]
   var TeclaEsquerda = ["KeyA"]
   var TeclaDireita = ["KeyD"]
 
+  var frutaPos = [2,2]
+
   for(var y = 0; y < TabuleiroTamanho; y++){ //criando o tabuleiro
     for(var x = 0; x < TabuleiroTamanho; x++){
-      tabuleiro.innerHTML += `<button class="campo" style="width:${500/TabuleiroTamanho}px; height:${500/TabuleiroTamanho}px" id="campo_n${x.toString() + y.toString()}"></button>`
+      tabuleiro.innerHTML += `<div class="campo" style="width:${500/TabuleiroTamanho}px; height:${500/TabuleiroTamanho}px" id="campo_n${x.toString() + y.toString()}"></button>`
     }
   }
 
@@ -48,16 +50,16 @@
   }
 
   window.addEventListener('keydown', event => {
-    if (TeclaCima.includes(event.code)){
+    if (TeclaCima.includes(event.code) && direction[1] != 1){
       direction = [0, -1]
     }
-    if (TeclaBaixo.includes(event.code)){
+    if (TeclaBaixo.includes(event.code)&& direction[1] != -1){
       direction = [0, 1]
     }
-    if (TeclaEsquerda.includes(event.code)){
+    if (TeclaEsquerda.includes(event.code)&& direction[0] != 1){
       direction = [-1, 0]
     }
-    if (TeclaDireita.includes(event.code)){
+    if (TeclaDireita.includes(event.code) && direction[0] != -1){
       direction = [1, 0]
     }
   });
@@ -77,24 +79,65 @@
     if(position[1]<0){
       position[1] =  TabuleiroTamanho - 1
     }
-    console.log(position)
+
     if(jogando){
-      setTimeout(move, 400)
+      setTimeout(move, 200)
     }
 
-    corpoCobra.push(position) //adicionando nova posição
-    corpoCobra.pop() // tirando ultima posição
+    var newPos = [position[0],position[1]]
+    corpoCobra.push(newPos) //adicionando nova posição ao corpo
 
+    if(position[0] == frutaPos[0] && position[1] == frutaPos[1]){
+      GerarFruta();
+    }else{
+      corpoCobra.shift() // tirando ultima posição
+    }
+    
+    
     PintarPosition()
+    
   }
 
   function PintarPosition(){
-    for (var x = 0; x < TabuleiroTamanho; x++) {
+    for (var x = 0; x < TabuleiroTamanho; x++) { //deixa tudo branco
       for (var y = 0; y < TabuleiroTamanho; y++) {
-        document.getElementById("campo_n" + x.toString() + y.toString()).style.backgroundColor = "white";
+        document.getElementById("campo_n" + x.toString() + y.toString()).style.backgroundColor = "black";
       }
     }
-   
-    document.getElementById("campo_n" + position[0].toString() + position[1].toString()).style.backgroundColor = "yellow";
+
+    document.getElementById("campo_n" + frutaPos[0].toString() + frutaPos[1].toString()).style.backgroundColor = "red";
+    
+    for(var i = 0; i<corpoCobra.length; i++){ //pinta o corpo da cobra
+      var atualCorpoPos = corpoCobra[i]
+
+      document.getElementById("campo_n" + atualCorpoPos[0].toString() + atualCorpoPos[1].toString()).style.backgroundColor = "green";
+    }
+    //document.getElementById("campo_n" + position[0].toString() + position[1].toString()).style.backgroundColor = "red"; // cabeça da cobra
   }
+
+  function GerarFruta(){
+    var posx = getRandomInt(0,9)
+    var posy = getRandomInt(0,9)
+
+    var corpox = []
+    var corpoy = []
+    for(var i = 0; i<corpoCobra.length; i++){ //pinta o corpo da cobra
+      var atualCorpoPos = corpoCobra[i]
+
+      corpox.push(atualCorpoPos[0])
+      corpoy.push(atualCorpoPos[1])
+    }
+    while(corpox.includes[posx] && corpoy.includes[posy]){
+      posx = getRandomInt(0,9)
+      posy = getRandomInt(0,9)
+    }
+    frutaPos = [posx,posy]
+  }
+
+  function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min)) + min;
+  } 
 </script>
+y
