@@ -19,7 +19,9 @@
     justify-content: center;
     align-items: center;
     text-align: center;
-    color: black;
+    color: white;
+    font-size: 10px;
     border-radius: 10px;
+    
 
 }
