@@ -1,4 +1,4 @@
-.tabuleiroStyle{
+.tabuleiroStyle {
     width: 500px;
     height: 500px;
     display: flex;
@@ -9,7 +9,7 @@
     align-items: center;
 }
 
-.campo{
+.campo {
     box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -21,7 +21,8 @@
     text-align: center;
     color: white;
     font-size: 10px;
-    border-radius: 10px;
-    
+    /*border: 1px solid rgb(189, 0, 0);
+     border-radius: 10px; */
+
 
 }
